@@ -2,12 +2,12 @@
 # Repository still under development
 
 Official implementation of the MRPyrNet architecture proposed in the paper
-[https://openreview.net/forum?id=7psPmlNffvg]("Improving MRI-based Knee Disorder Diagnosis with Pyramidal Feature Details") presented at the International Conference on Medical Imaging with Deep Learning (MIDL) 2021.
+[Improving MRI-based Knee Disorder Diagnosis with Pyramidal Feature Details](https://openreview.net/forum?id=7psPmlNffvg) presented at the International Conference on Medical Imaging with Deep Learning (MIDL) 2021.
  
 <img src="./midl2021.png" alt="drawing"/>
 
 ## Abstract
-
+*This paper presents MRPyrNet, a new convolutional neural network (CNN) architecture that improves the capabilities of CNN-based pipelines for knee injury detection via magnetic resonance imaging (MRI). Existing works showed that anomalies are localized in small-sized knee regions that appear in particular areas of MRI scans. Based on such facts, MRPyrNet exploits a Feature Pyramid Network to enhance small appearing features and Pyramidal Detail Pooling to capture such relevant information in a robust way. Experimental results on two publicly available datasets demonstrate that MRPyrNet improves the ACL tear and meniscal tear diagnosis capabilities of two state-of-the-art methodologies. Code is available at https://git.io/JtMPH.*
 
 ## Installation
 
