@@ -1,7 +1,8 @@
-# MRPyrNet **Repository still under development**
+# MRPyrNet 
+# Repository still under development
 
 Official implementation of the MRPyrNet architecture proposed in the paper
-[https://openreview.net/forum?id=7psPmlNffvg](**"Improving MRI-based Knee Disorder Diagnosis with Pyramidal Feature Details"**) presented at the International Conference on Medical Imaging with Deep Learning (MIDL) 2021.
+[https://openreview.net/forum?id=7psPmlNffvg]("Improving MRI-based Knee Disorder Diagnosis with Pyramidal Feature Details") presented at the International Conference on Medical Imaging with Deep Learning (MIDL) 2021.
  
 <img src="./midl2021.png" alt="drawing"/>
 
