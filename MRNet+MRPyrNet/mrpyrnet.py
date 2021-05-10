@@ -1,11 +1,15 @@
+import sys
+sys.path.append('..')
+
+import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 from torchvision import models
-from ..modules.alexnet import AlexNet
-from ..modules.pdp import PyramidalDetailPooling
-import math
+from modules.alexnet import AlexNet
+from modules.pdp import PyramidalDetailPooling
+
 
 class MRPyrNet(nn.Module):
 

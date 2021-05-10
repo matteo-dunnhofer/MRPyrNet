@@ -1,9 +1,12 @@
+import sys
+sys.path.append('..')
+
 import os
 import pandas as pd
 import numpy as np
 import torch
 import torch.utils.data as data
-from ..modules import utils as ut
+from modules import utils as ut
 
 
 class MRNetDataset(data.Dataset):
