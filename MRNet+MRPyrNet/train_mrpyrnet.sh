@@ -1,6 +1,6 @@
 DATE=$(date +"%Y-%m-%d-%H-%M")
 
-DATA_PATH=/home/matteo/Downloads/MRNet-v1.0/
+DATA_PATH=[path-to-MRNet-v1.0]
 EXPERIMENT="MRNetData-${DATE}-MRNet+MRPyrNet"
 PREFIX=MRNet+MRPyrNet
 

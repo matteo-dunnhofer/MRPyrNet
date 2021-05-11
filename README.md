@@ -20,14 +20,14 @@ git clone https://github.com/dontfollowmeimcrazy/MRPyrNet.git
 
 #### Download the MRNet dataset. 
 Download the official [MRNet dataset](https://stanfordmlgroup.github.io/competitions/mrnet/) and put wherever you want in your local machine.
-Then, set the path to the MRNet folder into the variable ```DATA``` contained in the bash file ```train_mrpyrnet_mrnet.sh```.
+Then, set the path to the MRNet folder into the variable ```DATA_PATH``` contained in the bash files ```train_mrpyrnet.sh``` located in the folders ```MRNet+MRPyrNet``` and ```ELNet+MRPyrNet```.
    
 ## Train and Test
 
 Run the following commands
 ```bash
 cd MRNet+MRPyrNet
-bash train_mrpyrnet_mrnet.sh 
+bash train_mrpyrnet.sh 
 ```  
 to run an experiment with the MRPyrNet applied to the [MRNet pipeline](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1002699). Brifely, This will train a MRNet+MRPyrNet instance for each view (axial, coronal, sagittal) for both the ACL and meniscus tear tasks. After, for each task, the script will train and test a logistic regressor combining the predictions of the three instances.
 Results, logs, and checkpoints for each experiment will be saved in the folder ```MRNet+MRPyrNet/experiments/```.

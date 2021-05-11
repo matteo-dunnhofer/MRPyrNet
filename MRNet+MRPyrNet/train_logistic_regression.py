@@ -1,3 +1,6 @@
+import sys
+sys.path.append('..')
+
 import argparse
 import os
 import random
@@ -9,7 +12,7 @@ from mrnetdataset import MRNetDataset
 import tqdm
 import csv
 import json
-import utils as ut
+import modules.utils as ut
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--seed', type=int, default=42)
@@ -98,7 +101,7 @@ for task in ['acl', 'meniscus']:
     results_val = {}
 
     for plane in ['axial', 'coronal', 'sagittal']:
-        predictions, labels = extract_predictions(task, plane, args.path_to_models, train=False)
+        predictions, labels = extract_predictions(task, plane, args.path_to_data, args.path_to_models, train=False)
         results_val['labels'] = labels
         results_val[plane] = predictions
 
@@ -112,8 +115,8 @@ for task in ['acl', 'meniscus']:
     y_pred = logreg.predict_proba(X_val)[:, 1]
     y_class_preds = (y_pred > 0.5).astype(np.float32)
     auc = metrics.roc_auc_score(y_val, y_pred)
-    #print(f'{task} AUC: {auc}')
-    #final_results_val[task] = auc
+    print(f'{task} tear - AUC: {auc}')
+
     accuracy, sensitivity, specificity = ut.accuracy_sensitivity_specificity(y_val, y_class_preds)
     final_results_val[task] = [auc, accuracy, sensitivity, specificity]
 

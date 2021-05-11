@@ -1,23 +1,22 @@
-import shutil
+import sys
+sys.path.append('..')
+
 import os
 import time
 from datetime import datetime
 import random
 import argparse
 import numpy as np
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 from tensorboardX import SummaryWriter
-
 from mrnetdataset import MRNetDataset
-from models.mrpyrnet import MRPyrNet
-
+from mrpyrnet import MRPyrNet
 from sklearn import metrics
 import csv
-import utils as ut
+import modules.utils as ut
 import math
 
 
@@ -187,12 +186,7 @@ def run(args):
         os.makedirs(os.path.join(exp_dir, 'logs'))
         os.makedirs(os.path.join(exp_dir, 'results'))
 
-    #log_root_folder = exp_dir + "/logs/{0}/{1}/".format(args.task, args.plane)
-    #if args.flush_history == 1:
-    #    objects = os.listdir(log_root_folder)
-    #    for f in objects:
-    #        if os.path.isdir(log_root_folder + f):
-    #            shutil.rmtree(log_root_folder + f)
+    log_root_folder = exp_dir + "/logs/{0}/{1}/".format(args.task, args.plane)
 
     now = datetime.now()
     logdir = log_root_folder + now.strftime("%Y%m%d-%H%M%S") + "/"
