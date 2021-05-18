@@ -1,9 +1,13 @@
+import sys
+sys.path.append('..')
+
 import os
+import random
 import pandas as pd
 import numpy as np
 import torch
 import torch.utils.data as data
-from ..modules import utils as ut
+import modules.utils as ut
 
 
 class MRNetDataset(data.Dataset):

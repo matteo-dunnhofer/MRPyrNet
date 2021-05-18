@@ -44,12 +44,13 @@ def random_flip(array):
     else:
         return array
 
-def random_resize(array, min_factor, max_factor, INPUT_DIM):
+"""
+def random_resize(array, min_factor, max_factor):
     if random.random() > 0.5:
         random_factor = random.uniform(min_factor, max_factor)
         s1, s2 = int(array.shape[1] * random_factor), int(array.shape[2] * random_factor)
-        if s1 < INPUT_DIM or s2 < INPUT_DIM:
-            s1, s2 = INPUT_DIM+2, INPUT_DIM+2
+        #if s1 < INPUT_DIM or s2 < INPUT_DIM:
+        #    s1, s2 = INPUT_DIM+2, INPUT_DIM+2
         size = (s1, s2)
 
         array_out = np.zeros((array.shape[0], size[0], size[1]))
@@ -62,6 +63,40 @@ def random_resize(array, min_factor, max_factor, INPUT_DIM):
         return array_out
     else:
         return array
+"""
+
+def random_resize(array, min_factor, max_factor, INPUT_DIM=256):
+    if random.random() > 0.5:
+        random_factor = random.uniform(min_factor, max_factor)
+        h, w = int(array.shape[1] * random_factor), int(array.shape[2] * random_factor)
+  
+        size = (h, w)
+
+        array_out = np.zeros((array.shape[0], INPUT_DIM, INPUT_DIM))
+        
+
+        for i in range(array.shape[0]):
+            if h > INPUT_DIM:
+                y1 = int( int(h / 2) - (INPUT_DIM / 2))
+                y2 = int( int(h / 2) + (INPUT_DIM / 2))
+            else:
+                y1 = 0
+                y2 = h
+
+            if w > INPUT_DIM:
+                x1 = int( int(w / 2) - (INPUT_DIM / 2))
+                x2 = int( int(w / 2) + (INPUT_DIM / 2))
+            else:
+                x1 = 0
+                x2 = w
+
+            sl = array[i, y1:y2, x1:x2] 
+            array_out[i] = resize(array[i], (INPUT_DIM, INPUT_DIM), anti_aliasing=True, preserve_range=True)
+
+        return array_out
+    else:
+        return array
+
 
 def resize_volume(array, INPUT_DIM=256):
     array_out = np.zeros((array.shape[0], INPUT_DIM, INPUT_DIM))

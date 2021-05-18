@@ -1,5 +1,4 @@
 # MRPyrNet 
-# Repository still under development
 
 Official implementation of the MRPyrNet architecture proposed in the paper
 [Improving MRI-based Knee Disorder Diagnosis with Pyramidal Feature Details](https://openreview.net/forum?id=7psPmlNffvg) presented at the International Conference on Medical Imaging with Deep Learning (MIDL) 2021.
@@ -29,22 +28,20 @@ Run the following commands
 cd MRNet+MRPyrNet
 bash train_mrpyrnet.sh 
 ```  
-to run an experiment with the MRPyrNet applied to the [MRNet pipeline](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1002699). Brifely, This will train a MRNet+MRPyrNet instance for each view (axial, coronal, sagittal) for both the ACL and meniscus tear tasks. After, for each task, the script will train and test a logistic regressor combining the predictions of the three instances.
-Results, logs, and checkpoints for each experiment will be saved in the folder ```MRNet+MRPyrNet/experiments/```.
+to run an experiment with the MRPyrNet applied to the [MRNet pipeline](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1002699). Brifely, This will train a MRNet+MRPyrNet instance for each view (axial, coronal, sagittal) for both the ACL and meniscus tear tasks. After, for each task, the script will train and test a logistic regressor combining the predictions of the three instances. Results, logs, and checkpoints for each experiment will be saved in the folder ```MRNet+MRPyrNet/experiments/```.
 
 Run the following commands
 ```bash
 cd ELNet+MRPyrNet
-bash train_mrpyrnet_mrnet.sh 
+bash train_mrpyrnet.sh 
 ```  
-to run an experiment with the MRPyrNet applied to the [ELNet pipeline](https://arxiv.org/abs/2005.02706). Brifely, This will train a MRNet+MRPyrNet instance for each view (axial, coronal, sagittal) for both the ACL and meniscus tear tasks. After, for each task, the script will train and test a logistic regressor combining the predictions of the three instances.
-Results, logs, and checkpoints for each experiment will be saved in the folder ```MRNet+MRPyrNet/experiments/```.
+to run an experiment with the MRPyrNet applied to the [ELNet pipeline](https://arxiv.org/abs/2005.02706). Brifely, This will train a single ELNet+MRPyrNet instance for the the ACL (axial view) and meniscus tear (coronal view) tasks. Results, logs, and checkpoints for each experiment will be saved in the folder ```ELNet+MRPyrNet/experiments/```.
 
 ## Contact
 
 Feel free to open an issue on GitHub for any problems. Otherwise you can contact me via e-mail by writing to [matteo.dunnhofer@uniud.it](matteo.dunnhofer@uniud.it).
 
-## References
+## Reference
 If you find this work useful please cite
 ```
 @InProceedings{Dunnhofer_2021_MIDL,

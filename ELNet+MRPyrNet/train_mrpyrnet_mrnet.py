@@ -1,11 +1,12 @@
-import shutil
+import sys
+sys.path.append('..')
+
 import os
 import time
 from datetime import datetime
 import random
 import argparse
 import numpy as np
-from tqdm import tqdm
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
@@ -14,10 +15,9 @@ from mrnetdataset import MRNetDataset
 from mrpyrnet import MRPyrNet
 from sklearn import metrics
 import csv
-import utils as ut
+import modules.utils as ut
 import math
-import warnings
-warnings.filterwarnings('ignore') 
+
 
 def train_model(model, train_loader, epoch, num_epochs, optimizer, writer, current_lr, device, log_every=100):
     model.train()
@@ -95,18 +95,14 @@ def evaluate_model(model, val_loader, epoch, num_epochs, writer, current_lr, dev
 
     y_trues = []
     y_preds = []
-    y_preds_mcc = []
     y_class_preds = []
     losses = []
     auc = float(0)
-    mcc = float(0)
 
-    #soft = nn.Softmax(dim=1)
-    for i, (image, label, weight) in enumerate(val_loader):
+    for i, (image, label) in enumerate(val_loader):
 
         image = image.to(device)
         label = label.to(device)
-        weight = weight.to(device)
 
         prediction1, prediction2, prediction3, prediction4, prediction5  = model(image) 
 
@@ -138,7 +134,6 @@ def evaluate_model(model, val_loader, epoch, num_epochs, writer, current_lr, dev
 
         writer.add_scalar('Val/Loss', loss_value, epoch * len(val_loader) + i)
         writer.add_scalar('Val/AUC', auc, epoch * len(val_loader) + i)
-        writer.add_scalar('Train/MCC', mcc, epoch * len(val_loader) + i)
 
 
         if (i % log_every == 0) & (i > 0):
@@ -185,12 +180,7 @@ def run(args):
         os.makedirs(os.path.join(exp_dir, 'logs'))
         os.makedirs(os.path.join(exp_dir, 'results'))
 
-    #log_root_folder = exp_dir + "/logs/{0}/{1}/".format(args.task, args.plane)
-    #if args.flush_history == 1:
-    #    objects = os.listdir(log_root_folder)
-    #    for f in objects:
-    #        if os.path.isdir(log_root_folder + f):
-    #            shutil.rmtree(log_root_folder + f)
+    log_root_folder = exp_dir + "/logs/{0}/{1}/".format(args.task, args.plane)
 
     now = datetime.now()
     logdir = log_root_folder + now.strftime("%Y%m%d-%H%M%S") + "/"
@@ -201,12 +191,12 @@ def run(args):
     ##-----SAMPLER------
     
     # create training and validation set
-    train_dataset = MRNetDataset(args.data_path, args.task, args.plane, train=True)
+    train_dataset = MRNetDataset(args.path_to_data, args.task, args.plane, train=True)
     train_dataset_weights = [train_dataset.weights[train_dataset.labels[i]] for i in range(len(train_dataset))]
     train_sampler = torch.utils.data.WeightedRandomSampler(train_dataset_weights, len(train_dataset), replacement=True)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=1, sampler=train_sampler, num_workers=4, drop_last=False)
     
-    validation_dataset = MRNetDataset(args.data_path, args.task, args.plane, train=False)
+    validation_dataset = MRNetDataset(args.path_to_data, args.task, args.plane, train=False)
     validation_loader = torch.utils.data.DataLoader(validation_dataset, batch_size=1, shuffle=False, num_workers=2, drop_last=False)
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -240,20 +230,16 @@ def run(args):
         # evaluate
         val_loss, val_auc, val_accuracy, val_sensitivity, val_specificity = evaluate_model(model, validation_loader, epoch, num_epochs, writer, current_lr, device)
 
-        if args.lr_scheduler == 'plateau':
-            scheduler.step(val_loss)
-        elif args.lr_scheduler == 'step':
-            scheduler.step()
-
         t_end = time.time()
         delta = t_end - t_start
 
-        print("train loss : {0} | train auc {1} | train mcc: {2} | val loss {3} | val auc {4} | elapsed time {6} s".format(
-            train_loss, train_auc,train_mcc, val_loss, val_auc, delta))
+        print("train loss : {0} | train auc {1} | val loss {2} | val auc {3} | elapsed time {4} s".format(
+            train_loss, train_auc, val_loss, val_auc, delta))
 
         print('-' * 30)
 
         if val_auc > best_val_auc:
+            best_val_loss = val_loss
             best_val_auc = val_auc
             best_val_accuracy = val_accuracy
             best_val_sensitivity = val_sensitivity
@@ -263,7 +249,7 @@ def run(args):
                 for f in os.listdir(exp_dir + '/models/'):
                     if (args.task in f) and (args.plane in f) and (args.prefix_name in f):
                         os.remove(exp_dir + f'/models/{f}')
-                torch.save(elnet, exp_dir + f'/models/{file_name}')
+                torch.save(model, exp_dir + f'/models/{file_name}')
 
     # save results to csv file
     with open(os.path.join(exp_dir, 'results', f'model_{args.prefix_name}_{args.task}_{args.plane}-results.csv'), 'w') as res_file:
@@ -283,12 +269,13 @@ def parse_arguments():
     parser.add_argument('-p', '--plane', type=str, required=True,
                         choices=['sagittal', 'coronal', 'axial'])
     parser.add_argument('--path_to_data', type=str, required=True)
+    parser.add_argument('--D', type=int, default=5)
     parser.add_argument('--set_norm_type', type=str, choices=['instance', 'layer'], default='layer')
     parser.add_argument('--K', type=int, choices=[1,2,3,4], default=4)
     parser.add_argument('--prefix_name', type=str, required=True)
     parser.add_argument('--experiment', type=str, required=True)
     parser.add_argument('--seed', type=int, default=42)
-    parser.add_argument('--epochs', type=int, default=50)
+    parser.add_argument('--epochs', type=int, default=200)
     parser.add_argument('--lr', type=float, default=1e-5)
     parser.add_argument('--save_model', type=int, choices=[0, 1], default=1)
     parser.add_argument('--log_every', type=int, default=100)

@@ -1,10 +1,14 @@
+import sys
+sys.path.append('..')
+
+import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import random
 import math
 from torch.nn.init import kaiming_uniform_, kaiming_normal_
-from ..modules.pdp import PyramidalDetailPooling
+from modules.pdp import PyramidalDetailPooling
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -150,11 +154,11 @@ class BlurPool(nn.Module):
         return self
 
 
-class ELNet(nn.Module):
+class MRPyrNet(nn.Module):
 
     def __init__(self, **kwargs):
 
-        super(ELNet, self).__init__()
+        super(MRPyrNet, self).__init__()
 
         self.K = kwargs.get('K', 4)  # default K for ELNet
         self.norm_type = kwargs.get('norm_type', 'instance')  # default multi-slice normalization
@@ -164,7 +168,7 @@ class ELNet(nn.Module):
         self.num_classes = kwargs.get('num_classes', 2)  # number of classes for ELNet
         self.feature_dropout = kwargs.get('dropout', 0.0) # 0.0 for MRNet
         self.D = kwargs.get('D', 5)
-        #self.detail_sizes_per_layer = kwargs.get('detail_sizes_per_layer', [[62], [29], [13], [5], [5]])
+        self.slice_size = kwargs.get('slice_size', 256)
 
         make_deterministic(self.seed)
 
@@ -220,7 +224,7 @@ class ELNet(nn.Module):
 
         factors = [1.0 - (ff * (1.0 / self.D)) for ff in range(self.D)]
 
-        slice_level_sizes = [int(slice_size * factor) for factor in factors]
+        slice_level_sizes = [int(self.slice_size * factor) for factor in factors]
         slice_level_sizes = [size if (size % 2) == 0 else size+1 for size in slice_level_sizes]
 
         detail_sizes = [slice_level_sizes]
@@ -275,7 +279,9 @@ class ELNet(nn.Module):
         del self.detail_sizes_per_layer[0]
 
         # copy one to last layer
-        detail_sizes_per_layer.append(detail_sizes_per_layer[-1])
+        self.detail_sizes_per_layer.append(self.detail_sizes_per_layer[-1])
+
+        print(self.detail_sizes_per_layer)
 
 
         # FPN
@@ -390,15 +396,13 @@ class ELNet(nn.Module):
 
     def forward(self, x):
         feats1, feats2, feats3, feats4, feats5 = self.feature_extraction(x)  # get [sx16Kx1x1]
-        #print(feats1.size())
-        #feats1, feats2, feats3, feats4, feats5 = feats1.unsqueeze(-1), feats2.unsqueeze(-1), feats3.unsqueeze(-1), feats4.unsqueeze(-1), feats5.squeeze(3)
+
         feats1, feats2, feats3, feats4, feats5 = feats1.squeeze(3), feats2.squeeze(3), feats3.squeeze(3), feats4.squeeze(3), feats5.squeeze(3)
         feats1, feats2, feats3, feats4, feats5 = feats1.permute(2, 1, 0), feats2.permute(2, 1, 0), feats3.permute(2, 1, 0), feats4.permute(2, 1, 0), feats5.permute(2, 1, 0)  # [1x16Kxs]
-        #feats1, feats2, feats3, feats4, feats5 = feats1.permute(2, 1, 0), feats2.permute(2, 1, 1), feats3.permute(2, 0, 1), feats4.permute(2, 0, 1), feats5.permute(2, 0, 1)  # [1x16Kxs]
-        #print(feats1.size())
+        
         # classifier
-        feats1, feats2, feats3, feats4, feats5 = self.max_pool(feats1).squeeze(2), self.max_pool(feats2).squeeze(2), self.max_pool(feats3).squeeze(2) , self.max_pool(feats4).squeeze(2), self.max_pool(feats5).squeeze(2) #1x16K]
-        #print(feats1.size())
+        feats1, feats2, feats3, feats4, feats5 = self.max_pool(feats1).squeeze(2), self.max_pool(feats2).squeeze(2), self.max_pool(feats3).squeeze(2) , self.max_pool(feats4).squeeze(2), self.max_pool(feats5).squeeze(2) 
+
         scores1, scores2, scores3, scores4, scores5 = self.fc1(feats1), self.fc2(feats2), self.fc3(feats3), self.fc4(feats4), self.fc5(feats5)
-        #print(scores1)
+        
         return scores1, scores2, scores3, scores4, scores5
