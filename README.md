@@ -50,6 +50,17 @@ If you find this work useful please cite
 	booktitle = {Proceedings of the Fourth Conference on Medical Imaging with Deep Learning (MIDL)},
 	year      = {2021}
 }
+
+@article{Dunnhofer_2022_CMIG,
+	title = {Deep convolutional feature details for better knee disorder diagnoses in magnetic resonance images},
+	journal = {Computerized Medical Imaging and Graphics},
+	pages = {102142},
+	year = {2022},
+	issn = {0895-6111},
+	doi = {https://doi.org/10.1016/j.compmedimag.2022.102142},
+	url = {https://www.sciencedirect.com/science/article/pii/S0895611122001124},
+	author = {Matteo Dunnhofer and Niki Martinel and Christian Micheloni},
+}
 ``` 
 
 ### Acknowledgements 
