@@ -1,7 +1,7 @@
 # MRPyrNet 
 
-Official implementation of the MRPyrNet architecture proposed in the paper
-[Improving MRI-based Knee Disorder Diagnosis with Pyramidal Feature Details](https://openreview.net/forum?id=7psPmlNffvg) presented at the International Conference on Medical Imaging with Deep Learning (MIDL) 2021.
+Official implementation of the MRPyrNet architecture proposed in the papers
+[Improving MRI-based Knee Disorder Diagnosis with Pyramidal Feature Details](https://openreview.net/forum?id=7psPmlNffvg) (MIDL 2021) and [Deep convolutional feature details for better knee disorder diagnoses in magnetic resonance images]([https://openreview.net/forum?id=7psPmlNffvg](https://www.sciencedirect.com/science/article/pii/S0895611122001124?via%3Dihub) (Computerized Medical Imaging and Graphics, 2022).
  
 <img src="./midl2021.png" alt="drawing"/>
 
